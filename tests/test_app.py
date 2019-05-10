@@ -31,5 +31,4 @@ class test_app(unittest.TestCase):
             j = json.load(f)
             print(j)
             fetch.create_recipe(j)
-            models.storage.reload()
             print(models.storage.all())

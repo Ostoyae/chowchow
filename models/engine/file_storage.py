@@ -14,9 +14,9 @@ class FileStorage:
     """serializes instances to a JSON file & deserializes back to instances"""
 
     # string - path to the JSON file
-    __user_fav_path = "data/user_fav.json"
+    __user_fav_path = "user_fav.json"
     # Where App will cache recipe to be reviewed by user are stored
-    __cache_path = "data/cache.json"
+    __cache_path = "cache.json"
     # dictionary - empty but will store all objects by <class name>.id
     __objects = {}
 

@@ -18,6 +18,7 @@ class Fetcher:
     __text = None
     __last_query: datetime
     __error: str = None
+    __cache_count : int = 0
 
     def __init__(self):
         pass
@@ -68,6 +69,7 @@ class Fetcher:
             query = self.json
         if query is not None:
             for r in query.get('recipes', None):
+                self.__cache_count += 1
                 attrs = dict(
                     title=r.get('title'),
                     image_url=r.get('image'),
@@ -75,13 +77,15 @@ class Fetcher:
                     cook_in_min=r.get("cookingMinutes"),
                     prep_in_min=r.get("preparationMinutes"),
                     dish_type=r.get("dishTypes"),
-                    ingredients=r.get("ingredients"),
+                    ingredients=r.get("extendedIngredients"),
                     servings=r.get("servings"),
-                    description=r.get("description"),
+                    description=r.get("instructions"),
                     api_id=r.get("id"),
                     api_url=r.get("spoonacularSourceUrl")
                 )
+
                 recipe = Recipe(**attrs)
+
                 recipe.save()
 
     @property
