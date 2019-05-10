@@ -1,8 +1,11 @@
-import models
 import uuid
 from datetime import datetime
 
+import models
+
 time = "%Y-%m-%dT%H:%M:%S"
+
+
 class BaseModel:
 
     def __init__(self, **kwargs):
@@ -30,18 +33,15 @@ class BaseModel:
         models.storage.new(self)
         models.storage.save()
 
-    def to_dict(self, remove_password=True):
+    def to_dict(self):
         """Returns a dictionary containing all keys/values of the instance."""
         new_dict = self.__dict__.copy()
         new_dict["created_at"] = new_dict["created_at"].strftime(time)
         new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
         new_dict["__class__"] = self.__class__.__name__
         new_dict.pop("_sa_instance_state", None)
-        if remove_password is True:
-            new_dict.pop("password", None)
         return new_dict
 
     def delete(self):
         """delete the current instance from the storage"""
-
-    models.storage.delete(self)
+        models.storage.delete(self)
