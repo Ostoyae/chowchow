@@ -11,34 +11,47 @@ from App.fetcher import Fetcher
 
 class test_app_backend(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.fetcher = Fetcher()
+
+
+    def tearDown(self) -> None:
+        models.storage.reload()
+        models.storage.reload("favorites")
+
     def test_dotenv_rapidAPI_host(self):
         self.assertIsNotNone(environ.get("X-RAPIDAPI-HOST", None))
 
     def test_dotenv_rapidAPI_key(self):
         self.assertIsNotNone(environ.get("X-RAPIDAPI-KEY", None))
 
-    @unittest.skip("Saving requests")
+    # @unittest.skip("Saving requests")
     def test_fetcher_get_recipe(self):
-        fetch = Fetcher()
-        fetch.get_recipe(**{'number': 20, 'tags': "vegetarian,dessert"})
-        self.assertEqual(fetch.status_code, 200)
-        self.assertEqual(type(fetch.data), dict)
-        with open('test_data.json', 'w+') as j:
-            json.dump(fetch.json, j)
+        self.fetcher.get_recipe(**{'number': 20, 'tags': "vegetarian,dessert"})
+        self.assertEqual(self.fetcher.status_code, 200)
+        self.assertEqual(type(self.fetcher.json), dict)
+        with open('test_data_1.json', 'w+') as j:
+            json.dump(self.fetcher.json, j)
+        self.fetcher.create_recipe()
 
-    @unittest.skip("not test this now")
+    @unittest.skip("want to use API call")
     def test_create_recipe_cache(self):
-        fetch = Fetcher()
+        fetch = self.fetcher
         with open('test_data_0.json', 'r') as f:
             j = json.load(f)
-            print(j)
             fetch.create_recipe(j)
             models.storage.reload("objects")
             print(models.storage.all())
 
+    # def test_create_recipe_cache(self):
+    #     self.fetcher.create_recipe()
+    #     models.storage.reload("objects")
+    #     print(models.storage.all())
+
     @unittest.skip("not test this now")
     def test_create_recipe_fav(self):
-        fetch = Fetcher()
+        fetch = self.fetcher
         with open('test_data_0.json', 'r') as f:
             j = json.load(f)
             print(j)
