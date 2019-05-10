@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 """
 Contains the FileStorage class
 """
@@ -15,9 +14,9 @@ class FileStorage:
     """serializes instances to a JSON file & deserializes back to instances"""
 
     # string - path to the JSON file
-    __user_fav_path = "data/user_fav.json"
+    __user_fav_path = "user_fav.json"
     # Where App will cache recipe to be reviewed by user are stored
-    __cache_path = "data/cache.json"
+    __cache_path = "cache.json"
     # dictionary - empty but will store all objects by <class name>.id
     __objects = {}
     # dictionary - will store favorite objects by <class name>.id
@@ -52,7 +51,7 @@ class FileStorage:
         odict = {}
         for key in self.__favorites:
             odict[key] = self.__favorites[key].to_dict()
-        with open(self.__user_fav_path, "w", encoding="utf-8") as f:
+        with open(self.__user_fav_path, "w+", encoding="utf-8") as f:
             json.dump(odict, f)
 
     def reload(self, js_file="objects"):
@@ -75,7 +74,6 @@ class FileStorage:
                 pass
 
     def delete(self, obj=None):
-        """delete obj from __objects if it’s inside"""
         if obj is not None:
             key = obj.__class__.__name__ + '.' + obj.id
             if key in self.__objects:
