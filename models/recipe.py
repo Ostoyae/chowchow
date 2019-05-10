@@ -18,5 +18,12 @@ class Recipe(BaseModel):
     api_id = 0  # api: id
     api_url = ""  # api: spoonacularSourceUrl
 
-    # TODO: Add property setters and getters
+    def like(self):
+        self.save("favorites")
+        self.delete()
 
+    def dislike(self):
+        self.delete()
+
+    def delete_from_fav(self):
+        self.delete('favorites')
