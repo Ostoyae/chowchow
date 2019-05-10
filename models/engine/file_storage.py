@@ -44,7 +44,7 @@ class FileStorage:
             else:
                 new = self.__favorites
             key = obj.__class__.__name__ + "." + obj.id
-            self.__new[key] = obj
+            new[key] = obj
 
     def save(self, dest="objects"):
         """serializes __objects to the JSON file (path: __file_path)"""
@@ -83,7 +83,7 @@ class FileStorage:
             if dest == "objects":
                 delete = self.__objects
             else:
-                delete = self.__objects
+                delete = self.__favorites
             key = obj.__class__.__name__ + '.' + obj.id
             if key in delete:
                 del delete[key]
