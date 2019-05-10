@@ -101,6 +101,11 @@ class Fetcher:
                 recipe = Recipe(**attrs)
                 recipe.save()
 
+    def main(self):
+        if self.__cache_count == 0:
+            self.get_recipe()
+            self.create_recipe()
+
     @property
     def status_code(self):
         return self.__status_code
