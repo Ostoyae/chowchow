@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """
 Contains the FileStorage class
 """
@@ -19,6 +20,8 @@ class FileStorage:
     __cache_path = "data/cache.json"
     # dictionary - empty but will store all objects by <class name>.id
     __objects = {}
+    # dictionary - will store favorite objects by <class name>.id
+    __favorites = {}
 
     def all(self, cls=None):
         """returns the dictionary __objects"""
@@ -44,15 +47,32 @@ class FileStorage:
         with open(self.__cache_path, "w", encoding="utf-8") as f:
             json.dump(odict, f)
 
-    def reload(self):
+    def save_to_favorites(self):
+        """serializes __objects to the JSON file (path: __file_path)"""
+        odict = {}
+        for key in self.__favorites:
+            odict[key] = self.__favorites[key].to_dict()
+        with open(self.__user_fav_path, "w", encoding="utf-8") as f:
+            json.dump(odict, f)
+
+    def reload(self, js_file="objects"):
         """Deserializes the JSON file to __objects"""
-        try:
-            with open(self.__cache_path, "r", encoding="utf-8") as f:
-                jo = json.load(f)
-            for key in jo:
-                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
-        except FileNotFoundError:
-            pass
+        if js_file == "objects":
+            try:
+                with open(self.__cache_path, "r", encoding="utf-8") as f:
+                    jo = json.load(f)
+                for key in jo:
+                    self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
+            except FileNotFoundError:
+                pass
+        elif js_file == "favorites":
+            try:
+                with open(self.__user_fav_path, "r", encoding="utf-8") as f:
+                    jo = json.load(f)
+                for key in jo:
+                    self.__favorites[key] = classes[jo[key]["__class__"]](**jo[key])
+            except FileNotFoundError:
+                pass
 
     def delete(self, obj=None):
         """delete obj from __objects if it’s inside"""

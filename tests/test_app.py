@@ -31,5 +31,14 @@ class test_app(unittest.TestCase):
             j = json.load(f)
             print(j)
             fetch.create_recipe(j)
-            models.storage.reload()
+            models.storage.reload("objects")
             print(models.storage.all())
+
+    def test_create_recipe(self):
+        fetch = Fetch()
+        with open('test_data.json', 'r') as f:
+            j = json.load(f)
+            print(j)
+            fetch.create_recipe(j)
+            models.storage.save_to_favorites() 
+            models.storage.reload("favorites")
