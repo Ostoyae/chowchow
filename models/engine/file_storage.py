@@ -40,43 +40,39 @@ class FileStorage:
         """sets in __objects the obj with key <obj class name>.id"""
         if obj is not None:
             if dest == "objects":
-                key = obj.__class__.__name__ + "." + obj.id
-                self.__objects[key] = obj
-            elif dest == "favorites":
-                key = obj.__class__.__name__ + "." + obj.id
-                self.__favorites[key] = obj
+                new = self.__objects
+            else:
+                new = self.__favorites
+            key = obj.__class__.__name__ + "." + obj.id
+            new[key] = obj
 
     def save(self, dest="objects"):
         """serializes __objects to the JSON file (path: __file_path)"""
         odict = {}
         if dest == "objects":
-            for key in self.__objects:
-                odict[key] = self.__objects[key].to_dict()
-            with open(self.__cache_path, "w", encoding="utf-8") as f:
-                json.dump(odict, f)
-        elif dest == "favorites":
-            for key in self.__favorites:
-                odict[key] = self.__favorites[key].to_dict()
-            with open(self.__user_fav_path, "w+", encoding="utf-8") as f:
-                json.dump(odict, f)
+            save = self.__objects
+            path = self.__cache_path
+        else:
+            save = self.__favorites
+            path = self.__user_fav_path
+        for key in save:
+            odict[key] = save[key].to_dict()
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(odict, f)
 
     def reload(self, dest="objects"):
         """Deserializes the JSON file to __objects"""
         if dest == "objects":
+            reload = self.__objects
+            path = self.__cache_path
+        else:
+            reload = self.__favorites
+            path = self.__user_fav_path
             try:
-                with open(self.__cache_path, "r", encoding="utf-8") as f:
+                with open(path, "r", encoding="utf-8") as f:
                     jo = json.load(f)
                 for key in jo:
-                    self.__objects[key] = classes[jo[key]["__class__"]](
-                        **jo[key])
-            except FileNotFoundError:
-                pass
-        elif dest == "favorites":
-            try:
-                with open(self.__user_fav_path, "r", encoding="utf-8") as f:
-                    jo = json.load(f)
-                for key in jo:
-                    self.__favorites[key] = classes[jo[key]["__class__"]](
+                    reload[key] = classes[jo[key]["__class__"]](
                         **jo[key])
             except FileNotFoundError:
                 pass
@@ -85,13 +81,12 @@ class FileStorage:
         """Removes object from objects or favorites dictionary"""
         if obj is not None:
             if dest == "objects":
-                key = obj.__class__.__name__ + '.' + obj.id
-                if key in self.__objects:
-                    del self.__objects[key]
-            if dest == "favorites":
-                key = obj.__class__.__name__ + '.' + obj.id
-                if key in self.__favorites:
-                    del self.__favorites[key]
+                delete = self.__objects
+            else:
+                delete = self.__favorites
+            key = obj.__class__.__name__ + '.' + obj.id
+            if key in delete:
+                del delete[key]
 
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
