@@ -327,3 +327,4 @@ tags
 [._]*.un~
 
 /tests/img/
+/App/img/*
