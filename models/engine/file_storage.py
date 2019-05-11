@@ -68,14 +68,14 @@ class FileStorage:
         else:
             reload = self.__favorites
             path = self.__user_fav_path
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    jo = json.load(f)
-                for key in jo:
-                    reload[key] = classes[jo[key]["__class__"]](
-                        **jo[key])
-            except FileNotFoundError:
-                pass
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                jo = json.load(f)
+            for key in jo:
+                reload[key] = classes[jo[key]["__class__"]](
+                    **jo[key])
+        except FileNotFoundError:
+            pass
 
     def delete(self, obj=None, dest="objects"):
         """Removes object from objects or favorites dictionary"""

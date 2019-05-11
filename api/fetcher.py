@@ -19,7 +19,7 @@ class Fetcher:
     __text = None
     __last_query: datetime
     __error: str = None
-    __cache_count : int = 0
+    __cache_count: int = 0
 
     def __init__(self):
         pass
@@ -40,16 +40,12 @@ class Fetcher:
         if kwargs:
             [options.update({k: v}) for k, v in kwargs.items()]
         else:
-            options = {"number": 100}
+            options = {"number": 25}
 
         header = {
             "X-RapidAPI-Host": getenv("X-RAPIDAPI-HOST"),
             "X-RapidAPI-Key": getenv("X-RAPIDAPI-KEY")
         }
-        print(self.__api + endpoint)
-        print(header)
-        endpoint = endpoint + '?number=20'
-        print(self.__api + endpoint)
         req = requests.get(self.__api + "recipes/" + endpoint, params=options,
                            headers=header)
         self.status_code = req.status_code
@@ -86,7 +82,7 @@ class Fetcher:
 
                 attrs = dict(
                     title=r.get('title'),
-                    image_url= 'images/' + img_name,
+                    image_url='images/' + img_name,
                     source_url=r.get('sourceUrl'),
                     cook_in_min=r.get("cookingMinutes"),
                     prep_in_min=r.get("preparationMinutes"),
@@ -102,6 +98,7 @@ class Fetcher:
                 recipe.save()
 
     def main(self):
+        print(models.storage.count())
         self.__cache_count = models.storage.count()
         if self.__cache_count == 0:
             self.get_recipe()
