@@ -2,6 +2,7 @@
 """THis script will handle the calla to the API"""
 from os import getenv
 from datetime import datetime
+import shutil
 
 import requests
 
@@ -18,7 +19,7 @@ class Fetcher:
     __text = None
     __last_query: datetime
     __error: str = None
-    __cache_count : int = 0
+    __cache_count: int = 0
 
     def __init__(self):
         pass
@@ -39,24 +40,20 @@ class Fetcher:
         if kwargs:
             [options.update({k: v}) for k, v in kwargs.items()]
         else:
-            options = {"number": 100}
+            options = {"number": 25}
 
         header = {
             "X-RapidAPI-Host": getenv("X-RAPIDAPI-HOST"),
             "X-RapidAPI-Key": getenv("X-RAPIDAPI-KEY")
         }
-        print(self.__api + endpoint)
-        print(header)
-        endpoint = endpoint + '?number=20'
-        print(self.__api + endpoint)
         req = requests.get(self.__api + "recipes/" + endpoint, params=options,
                            headers=header)
         self.status_code = req.status_code
         if req.status_code not in range(400 - 512):
             try:
-                self.data = req.json()
+                self.json = req.json()
             except ValueError:
-                self.data = req.text
+                self.text = req.text
 
             self.ok()
         else:
@@ -70,9 +67,22 @@ class Fetcher:
         if query is not None:
             for r in query.get('recipes', None):
                 self.__cache_count += 1
+                img_url = r.get('image', None)
+                try:
+                    if img_url:
+                        req = requests.get(img_url, stream=True, timeout=5)
+                        if req.status_code == 200:
+                            img_name = img_url.split('/')[-1]
+                            with open('images/' + img_name, 'wb') as img:
+                                req.raw.decode_content = True
+                                shutil.copyfileobj(req.raw, img)
+                except Exception as e:
+                    print(e)
+                    exit(-1)
+
                 attrs = dict(
                     title=r.get('title'),
-                    image_url=r.get('image'),
+                    image_url='images/' + img_name,
                     source_url=r.get('sourceUrl'),
                     cook_in_min=r.get("cookingMinutes"),
                     prep_in_min=r.get("preparationMinutes"),
@@ -85,8 +95,14 @@ class Fetcher:
                 )
 
                 recipe = Recipe(**attrs)
-
                 recipe.save()
+
+    def main(self):
+        print(models.storage.count())
+        self.__cache_count = models.storage.count()
+        if self.__cache_count == 0:
+            self.get_recipe()
+            self.create_recipe()
 
     @property
     def status_code(self):
