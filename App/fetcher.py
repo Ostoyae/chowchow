@@ -102,6 +102,7 @@ class Fetcher:
                 recipe.save()
 
     def main(self):
+        self.__cache_count = models.storage.count()
         if self.__cache_count == 0:
             self.get_recipe()
             self.create_recipe()
