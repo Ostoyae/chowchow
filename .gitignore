@@ -326,5 +326,6 @@ tags
 # Persistent undo
 [._]*.un~
 
-/tests/img/
-/App/img/*
+images/*
+/api/images/*
+/tests/images/*

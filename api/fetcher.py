@@ -77,7 +77,7 @@ class Fetcher:
                         req = requests.get(img_url, stream=True, timeout=5)
                         if req.status_code == 200:
                             img_name = img_url.split('/')[-1]
-                            with open('img/' + img_name, 'wb') as img:
+                            with open('images/' + img_name, 'wb') as img:
                                 req.raw.decode_content = True
                                 shutil.copyfileobj(req.raw, img)
                 except Exception as e:
@@ -86,7 +86,7 @@ class Fetcher:
 
                 attrs = dict(
                     title=r.get('title'),
-                    image_url= 'img/' + img_name,
+                    image_url= 'images/' + img_name,
                     source_url=r.get('sourceUrl'),
                     cook_in_min=r.get("cookingMinutes"),
                     prep_in_min=r.get("preparationMinutes"),

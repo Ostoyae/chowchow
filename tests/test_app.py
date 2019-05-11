@@ -6,7 +6,7 @@ from os import environ
 from datetime import datetime
 
 
-from App.fetcher import Fetcher
+from api.fetcher import Fetcher
 
 
 class test_app_backend(unittest.TestCase):
