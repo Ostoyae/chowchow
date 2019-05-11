@@ -1,4 +1,4 @@
-from App.fetcher import Fetcher
+from api.fetcher import Fetcher
 
 fetcher = Fetcher()
 fetcher.main()
